@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserMultisig {
+  id              String   @id
+  userAddress     String
+  multisigAddress String
+  chain           Chain
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+
+  @@unique([multisigAddress, chain])
+  @@unique([userAddress, chain])
+}
+
+model PendingTransaction {
+  id              String            @id
+  multisigAddress String
+  chain           Chain
+  transactionHash String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  status          TransactionStatus
+}
+
+enum Chain {
+  OPTIMISM
+  BASE
+  LINEA
+  ARBITRUM
+  AVALANCHE
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
